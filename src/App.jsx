@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import Countdown from "./components/Countdown.jsx";
+import GuestAdmin from "./components/GuestAdmin.jsx";
 import InvitationCover from "./components/InvitationCover.jsx";
 import MusicToggle from "./components/MusicToggle.jsx";
 import Reveal from "./components/Reveal.jsx";
 import RsvpDialog from "./components/RsvpDialog.jsx";
 import VenueSection from "./components/VenueSection.jsx";
+import { getSupabaseClient } from "./lib/supabase.js";
 
 const venues = [
   {
@@ -72,8 +74,55 @@ const venues = [
 ];
 
 export default function App() {
+  const searchParams = new URLSearchParams(window.location.search);
+  const isAdminPage = searchParams.has("admin");
+  const invitationToken = searchParams.get("invite");
+  const [invitation, setInvitation] = useState(null);
+  const [invitationStatus, setInvitationStatus] = useState(invitationToken ? "loading" : "missing");
   const [isInvitationOpen, setIsInvitationOpen] = useState(false);
   const [isCoverVisible, setIsCoverVisible] = useState(true);
+
+  useEffect(() => {
+    if (!invitationToken) {
+      setInvitation(null);
+      setInvitationStatus("missing");
+      return undefined;
+    }
+
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      setInvitationStatus("unconfigured");
+      return undefined;
+    }
+
+    let active = true;
+    setInvitationStatus("loading");
+    supabase.rpc("get_guest_invitation", { p_invitation_token: invitationToken })
+      .then(({ data, error }) => {
+        if (!active) return;
+        if (error) {
+          console.error("Could not validate this invitation link.", error);
+          setInvitationStatus("error");
+          return;
+        }
+
+        const guest = Array.isArray(data) ? data[0] : null;
+        if (!guest?.guest_name || !Array.isArray(guest.event_ids) || guest.event_ids.length === 0) {
+          setInvitationStatus("invalid");
+          return;
+        }
+
+        setInvitation({
+          guestName: guest.guest_name,
+          eventIds: guest.event_ids
+        });
+        setInvitationStatus("ready");
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [invitationToken]);
 
   const openInvitation = useCallback(() => {
     setIsInvitationOpen(true);
@@ -81,8 +130,33 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (isInvitationOpen) document.getElementById("couple-names")?.focus({ preventScroll: true });
-  }, [isInvitationOpen]);
+    if (isInvitationOpen && invitation) {
+      document.title = `Wedding Invitation for ${invitation.guestName}`;
+      document.getElementById("couple-names")?.focus({ preventScroll: true });
+    }
+  }, [invitation, isInvitationOpen]);
+
+  if (isAdminPage) return <GuestAdmin />;
+
+  if (invitationStatus !== "ready") {
+    const accessMessage = {
+      missing: "This wedding invitation is available through a personal link. Please contact the person who shared it if your link is missing.",
+      loading: "Opening your invitation…",
+      unconfigured: "This invitation link is not available right now. Please try again later.",
+      invalid: "This invitation link is invalid or is no longer active. Please contact the person who shared it.",
+      error: "We could not load this invitation right now. Please check your connection and try again."
+    }[invitationStatus];
+
+    return (
+      <>
+        <div className="paper-grain" aria-hidden="true"></div>
+        <main className="invitation-access section-shell" aria-live="polite">
+          <h1 className="script section-title">Wedding Invitation</h1>
+          <p>{accessMessage}</p>
+        </main>
+      </>
+    );
+  }
 
   return (
     <>
@@ -94,17 +168,15 @@ export default function App() {
         id="invitation"
         inert={!isInvitationOpen}
         aria-hidden={!isInvitationOpen}
-        aria-label="Wedding invitation for Zain"
+        aria-label={`Wedding invitation for ${invitation.guestName}`}
       >
         <MusicToggle />
         <Reveal as="section" className="hero section-shell" aria-labelledby="couple-names">
           <div className="hero__top">
-            <p className="script hero__occasion">Wedding Invite</p>
-                        {/* <p className="script hero__occasion">Wedding Invite to {"{Invited Person Name}"}</p> */}
+            <p className="script hero__occasion">Wedding Invite for</p>
 
             <p className="hero__date" aria-hidden="true"></p>
-            <h1 className="script hero__names" id="couple-names" tabIndex="-1">Zain</h1>
-                        {/* <h1 className="script hero__names" id="couple-names" tabIndex="-1">Zain <span>&amp;</span><br />unknown</h1> */}
+            <h1 className="script hero__names" id="couple-names" tabIndex="-1">{invitation.guestName}</h1>
 
             <a className="scroll-cue script" href="#welcome">
               Scroll down <span aria-hidden="true">⌄</span>
@@ -128,7 +200,9 @@ export default function App() {
 
         <Countdown />
 
-        {venues.map((venue) => <VenueSection key={venue.id} venue={venue} />)}
+        {venues
+          .filter((venue) => invitation.eventIds.includes(venue.id))
+          .map((venue) => <VenueSection key={venue.id} venue={venue} />)}
 
         <Reveal as="section" className="details section-shell" aria-label="Guest notes">
           <div className="paper-card details__card">
