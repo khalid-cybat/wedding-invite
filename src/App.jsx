@@ -173,10 +173,12 @@ export default function App() {
         <MusicToggle />
         <Reveal as="section" className="hero section-shell" aria-labelledby="couple-names">
           <div className="hero__top">
-            <p className="script hero__occasion">Wedding Invite for</p>
+            <p className="script hero__occasion">Wedding Invite By</p>
 
             <p className="hero__date" aria-hidden="true"></p>
-            <h1 className="script hero__names" id="couple-names" tabIndex="-1">{invitation.guestName}</h1>
+            <h1 className="script hero__names" id="couple-names" tabIndex="-1">Zain</h1>
+                        {/* <h1 className="script hero__names" id="couple-names" tabIndex="-1">{invitation.guestName}</h1> */}
+
 
             <a className="scroll-cue script" href="#welcome">
               Scroll down <span aria-hidden="true">⌄</span>

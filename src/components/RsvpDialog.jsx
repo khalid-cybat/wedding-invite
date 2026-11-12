@@ -72,13 +72,13 @@ export default function RsvpDialog() {
             <option value="yes">Joyfully accepts</option>
             <option value="no">Regretfully declines</option>
           </select>
-          <label htmlFor="guest-count">Number of guests</label>
+          {/* <label htmlFor="guest-count">Number of guests</label>
           <select id="guest-count" name="guests" defaultValue="1">
             <option value="1">1 guest</option>
             <option value="2">2 guests</option>
             <option value="3">3 guests</option>
             <option value="4">4 guests</option>
-          </select>
+          </select> */}
           <label htmlFor="guest-note">A note for the couple <span>(optional)</span></label>
           <textarea id="guest-note" name="note" rows="3"></textarea>
           <button className="submit-rsvp" type="submit">Send your reply</button>

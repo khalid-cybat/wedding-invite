@@ -223,7 +223,7 @@ button { color: inherit; }
 .text-link { display: inline-block; margin-top: 10px; color: #9c7538; font-size: .82rem; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 
 .details { padding: 0 0 38px; }
-.details__card { overflow: hidden; padding: 38px 31px; background-image: url("/assets/paper-details.webp"); }
+.details__card { overflow: hidden; padding: 38px 31px; background-image: url("/assets/paper-welcome.webp"); }
 .details__card .section-title { margin: 0 0 9px; }
 .details__card p { max-width: 265px; margin: 0 auto; color: #8c7965; font-size: .9rem; line-height: 1.18; }
 .details__divider { display: block; margin: 17px 0; color: #b8945f; font-size: 1.1rem; }
