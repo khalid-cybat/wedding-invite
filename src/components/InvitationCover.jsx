@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function InvitationCover({ onOpen }) {
+export default function InvitationCover({ onOpen, onStartMusic }) {
   const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
@@ -28,10 +28,17 @@ export default function InvitationCover({ onOpen }) {
             alt="A cream wedding invitation envelope with floral embossing"
           />
         </div>
-        <button className="open-invitation" type="button" autoFocus onClick={() => setIsClosing(true)}>
+        <button
+          className="open-invitation"
+          type="button"
+          autoFocus
+          onClick={() => {
+            onStartMusic();
+            setIsClosing(true);
+          }}
+        >
           <span className="open-invitation__arrow" aria-hidden="true">↓</span>
-                    <span>Tap to open</span>
-
+          <span>Tap to open</span>
         </button>
       </div>
     </div>

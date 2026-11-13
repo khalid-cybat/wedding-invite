@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Countdown from "./components/Countdown.jsx";
 import GuestAdmin from "./components/GuestAdmin.jsx";
 import InvitationCover from "./components/InvitationCover.jsx";
@@ -81,6 +81,39 @@ export default function App() {
   const [invitationStatus, setInvitationStatus] = useState(invitationToken ? "loading" : "missing");
   const [isInvitationOpen, setIsInvitationOpen] = useState(false);
   const [isCoverVisible, setIsCoverVisible] = useState(true);
+  const audioRef = useRef(null);
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+  const [musicMessage, setMusicMessage] = useState("");
+
+  const startMusic = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    setMusicMessage("");
+    try {
+      audio.play().catch((error) => {
+        console.error("Could not start the wedding music.", error);
+        setIsMusicPlaying(false);
+        setMusicMessage("Music could not be played. Check that public/audio/wedding-music.mp3 exists.");
+      });
+    } catch (error) {
+      console.error("Could not start the wedding music.", error);
+      setIsMusicPlaying(false);
+      setMusicMessage("Music could not be played. Check that public/audio/wedding-music.mp3 exists.");
+    }
+  }, []);
+
+  const toggleMusic = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (audio.paused) {
+      startMusic();
+    } else {
+      audio.pause();
+      setMusicMessage("");
+    }
+  }, [startMusic]);
 
   useEffect(() => {
     if (!invitationToken) {
@@ -112,8 +145,14 @@ export default function App() {
           return;
         }
 
+        if (!["guest", "group"].includes(guest.recipient_type)) {
+          setInvitationStatus("invalid");
+          return;
+        }
+
         setInvitation({
           guestName: guest.guest_name,
+          recipientType: guest.recipient_type,
           eventIds: guest.event_ids
         });
         setInvitationStatus("ready");
@@ -130,11 +169,15 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (isInvitationOpen && invitation) {
-      document.title = `Wedding Invitation for ${invitation.guestName}`;
+    if (invitation && isInvitationOpen) {
+      document.title = invitation.recipientType === "guest"
+        ? `Wedding Invitation for ${invitation.guestName}`
+        : "Zain — Wedding Invitation";
       document.getElementById("couple-names")?.focus({ preventScroll: true });
     }
   }, [invitation, isInvitationOpen]);
+
+  useEffect(() => () => audioRef.current?.pause(), []);
 
   if (isAdminPage) return <GuestAdmin />;
 
@@ -161,24 +204,44 @@ export default function App() {
   return (
     <>
       <div className="paper-grain" aria-hidden="true"></div>
-      {isCoverVisible && <InvitationCover onOpen={openInvitation} />}
+      <audio
+        className="sr-only"
+        ref={audioRef}
+        src="/audio/wedding-music.mp3"
+        loop
+        preload="none"
+        onPlay={() => setIsMusicPlaying(true)}
+        onPause={() => setIsMusicPlaying(false)}
+        onError={() => {
+          console.error("Could not load /audio/wedding-music.mp3.");
+          setIsMusicPlaying(false);
+          setMusicMessage("Music file not found. Add wedding-music.mp3 to public/audio.");
+        }}
+      />
+      {isCoverVisible && <InvitationCover onOpen={openInvitation} onStartMusic={startMusic} />}
 
       <main
         className="invitation"
         id="invitation"
         inert={!isInvitationOpen}
         aria-hidden={!isInvitationOpen}
-        aria-label={`Wedding invitation for ${invitation.guestName}`}
+        aria-label={invitation.recipientType === "guest"
+          ? `Wedding invitation for ${invitation.guestName}`
+          : "Wedding invitation"}
       >
-        <MusicToggle />
+        <MusicToggle
+          isPlaying={isMusicPlaying}
+          message={musicMessage}
+          onToggle={toggleMusic}
+        />
         <Reveal as="section" className="hero section-shell" aria-labelledby="couple-names">
           <div className="hero__top">
             <p className="script hero__occasion">Wedding Invite By</p>
 
             <p className="hero__date" aria-hidden="true"></p>
-            <h1 className="script hero__names" id="couple-names" tabIndex="-1">Zain</h1>
-                        {/* <h1 className="script hero__names" id="couple-names" tabIndex="-1">{invitation.guestName}</h1> */}
-
+            <h1 className="script hero__names" id="couple-names" tabIndex="-1">
+              {invitation.recipientType === "guest" ? invitation.guestName : "Zain"}
+            </h1>
 
             <a className="scroll-cue script" href="#welcome">
               Scroll down <span aria-hidden="true">⌄</span>

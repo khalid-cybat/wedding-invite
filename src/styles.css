@@ -314,7 +314,7 @@ button { color: inherit; }
 .admin-card > .section-title, .admin-list > .section-title { font-size: 1.65rem; }
 .admin-form { display: grid; gap: 9px; margin-top: 17px; }
 .admin-form label, .admin-guest > label { color: #826f59; font-size: .88rem; }
-.admin-form input:not([type="checkbox"]), .admin-guest > input {
+.admin-form input:not([type="checkbox"]), .admin-form select, .admin-guest > input, .admin-guest select {
   width: 100%;
   padding: 10px 11px;
   border: 1px solid #d5c3a6;
@@ -322,7 +322,7 @@ button { color: inherit; }
   background: rgb(255 255 255 / 55%);
   color: #6d5e4d;
 }
-.admin-form input:focus, .admin-guest input:focus { outline: 2px solid rgb(179 131 57 / 35%); outline-offset: 1px; }
+.admin-form input:focus, .admin-form select:focus, .admin-guest input:focus, .admin-guest select:focus { outline: 2px solid rgb(179 131 57 / 35%); outline-offset: 1px; }
 .admin-events { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 9px 0; padding: 10px 12px 12px; border: 1px solid #d5c3a6; }
 .admin-events legend { padding-inline: 5px; color: #826f59; font-size: .86rem; }
 .admin-events label, .admin-active { display: inline-flex; align-items: center; gap: 7px; color: #8b7964; font-size: .88rem; }

@@ -64,7 +64,7 @@ export default function GuestAdmin() {
     if (!supabase) return;
     const { data, error: loadError } = await supabase
       .from("guests")
-      .select("id, name, invitation_token, event_ids, active, created_at")
+      .select("id, name, recipient_type, invitation_token, event_ids, active, created_at")
       .order("created_at", { ascending: false });
 
     if (loadError) {
@@ -140,8 +140,9 @@ export default function GuestAdmin() {
     const form = event.currentTarget;
     const formData = new FormData(form);
     const name = String(formData.get("name") ?? "").trim();
+    const recipientType = formData.get("recipientType");
     const eventIds = formData.getAll("eventIds");
-    if (!name || eventIds.length === 0) {
+    if (!name || !["guest", "group"].includes(recipientType) || eventIds.length === 0) {
       setError("Enter a guest or group name and select at least one event.");
       return;
     }
@@ -158,6 +159,7 @@ export default function GuestAdmin() {
     setSaving(true);
     const { error: insertError } = await supabase.from("guests").insert({
       name,
+      recipient_type: recipientType,
       event_ids: eventIds,
       invitation_token: token
     });
@@ -181,8 +183,9 @@ export default function GuestAdmin() {
     setMessage("");
     const formData = new FormData(event.currentTarget);
     const name = String(formData.get("name") ?? "").trim();
+    const recipientType = formData.get("recipientType");
     const eventIds = formData.getAll("eventIds");
-    if (!name || eventIds.length === 0) {
+    if (!name || !["guest", "group"].includes(recipientType) || eventIds.length === 0) {
       setError("Each guest needs a name and at least one selected event.");
       return;
     }
@@ -192,6 +195,7 @@ export default function GuestAdmin() {
       .from("guests")
       .update({
         name,
+        recipient_type: recipientType,
         event_ids: eventIds,
         active: formData.get("active") === "on"
       })
@@ -276,6 +280,11 @@ export default function GuestAdmin() {
         <form className="admin-form" onSubmit={createGuest}>
           <label htmlFor="new-guest-name">Guest or group name</label>
           <input id="new-guest-name" name="name" maxLength="120" required />
+          <label htmlFor="new-recipient-type">Invitation type</label>
+          <select id="new-recipient-type" name="recipientType" defaultValue="guest">
+            <option value="guest">Individual guest</option>
+            <option value="group">Group</option>
+          </select>
           <fieldset className="admin-events">
             <legend>Events they may attend</legend>
             {EVENTS.map((event) => (
@@ -299,6 +308,15 @@ export default function GuestAdmin() {
             <form className="admin-card admin-guest" key={guest.id} onSubmit={(event) => saveGuest(event, guest.id)}>
               <label htmlFor={`guest-name-${guest.id}`}>Guest or group name</label>
               <input id={`guest-name-${guest.id}`} name="name" defaultValue={guest.name} maxLength="120" required />
+              <label htmlFor={`guest-type-${guest.id}`}>Invitation type</label>
+              <select
+                id={`guest-type-${guest.id}`}
+                name="recipientType"
+                defaultValue={guest.recipient_type ?? "guest"}
+              >
+                <option value="guest">Individual guest</option>
+                <option value="group">Group</option>
+              </select>
               <fieldset className="admin-events">
                 <legend>Allowed events</legend>
                 {EVENTS.map((event) => (

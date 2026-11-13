@@ -1,11 +1,11 @@
 # Wedding invitation
 
-This Vite + React site supports guest-specific invitation links. An admin can assign one or more celebrations to each guest or group; only the assigned event sections appear after the guest opens their link.
+This Vite + React site supports guest-specific invitation links. An admin can set each invitation as an individual guest or a group, assign one or more celebrations, and share a link. Individual invitations show the recipient name; group invitations keep the name in the admin only.
 
 ## Supabase setup
 
 1. Create a Supabase project.
-2. In the Supabase SQL Editor, run [`supabase/migrations/20261113000000_guest_invitations.sql`](./supabase/migrations/20261113000000_guest_invitations.sql).
+2. In the Supabase SQL Editor, run [`supabase/migrations/20261113000000_guest_invitations.sql`](./supabase/migrations/20261113000000_guest_invitations.sql), followed by [`supabase/migrations/20261113010000_recipient_type.sql`](./supabase/migrations/20261113010000_recipient_type.sql). The second SQL script updates existing guests as individual invitations and updates the invitation lookup function.
 3. In **Authentication → Users**, create the admin account. Disable public sign-ups in the Supabase Auth settings.
 4. Copy the admin user's UUID from the Users page and allowlist it by running this SQL in the SQL Editor:
 
@@ -36,6 +36,10 @@ This Vite + React site supports guest-specific invitation links. An admin can as
 - Use **Copy link** to share its unique invitation URL. The URL contains an opaque random token, not the guest's name or event list.
 - Change the selected events and save to update an invitation. Clear **Link active** and save to revoke it; an inactive link cannot be used.
 - A plain site URL or invalid invitation link does not show the wedding details.
+
+## Invitation music
+
+Put your music file at `public/audio/wedding-music.mp3` (create the `public/audio` folder if needed). The “Tap to open” button starts it; the music control on the invitation can pause and resume playback. Browsers require that playback starts from a user action, and the audio file must be present at that path.
 
 The existing general RSVP form is unchanged. RSVP replies continue to be saved in the guest's browser, not in Supabase.
 
