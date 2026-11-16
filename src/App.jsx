@@ -21,10 +21,10 @@ const venues = [
     imageAlt: "Illustration of the house",
     scheduleDate: "03-December-2026",
     events: [
-      { time: "9 PM", dateTime: "2026-12-03T21:00:00+05:00", label: <>Guest<br />Arrival</> },
-      { time: "10 PM", dateTime: "2026-12-03T22:00:00+05:00", label: <>Manhandi<br />Ceremony</> },
-      { time: "11 PM", dateTime: "2026-12-03T23:00:00+05:00", label: "Dinner" },
-      { time: "1 AM", dateTime: "2026-12-04T01:00:00+05:00", label: "Dance" }
+      { time: "8 PM", dateTime: "2026-12-03T21:00:00+05:00", label: <>Guest<br />Arrival</> },
+      { time: "9 PM", dateTime: "2026-12-03T22:00:00+05:00", label: <>Manhandi<br />Ceremony</> },
+      { time: "10 PM", dateTime: "2026-12-03T23:00:00+05:00", label: "Dinner" },
+      { time: "11 AM", dateTime: "2026-12-04T01:00:00+05:00", label: "Dance" }
     ],
     mapEmbed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3402.9316381008507!2d73.10034317448967!3d31.471066649578518!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x392269f9f0fabcd9%3A0x1e73d9fe7c0810c8!2sGreen%20villas!5e0!3m2!1sen!2s!4v1794469128771!5m2!1sen!2s",
     directions: "https://www.google.com/maps/place/Green+villas/@31.4344825,73.0686526,13z/data=!4m10!1m2!2m1!1sGreen+Villas!3m6!1s0x392269f9f0fabcd9:0x1e73d9fe7c0810c8!8m2!3d31.4710621!4d73.1029181!15sCgxHcmVlbiBWaWxsYXNaDiIMZ3JlZW4gdmlsbGFzkgEPaG91c2luZ19jb21wbGV4mgFEQ2k5RFFVbFJRVU52WkVOb2RIbGpSamx2VDJzeFRsTkZNVEJoYkhCelZrZFdTMlZzY0daa2JYQnFVMnc1UjFOSFl4QULgAQD6AQQIABAy!16s%2Fg%2F11h_3_5n1k?entry=ttu&g_ep=EgoyMDI2MTEwOS4wIKXMDSoASAFQAw%3D%3D"
@@ -210,7 +210,13 @@ export default function App() {
         src="/audio/wedding-music.mp3"
         loop
         preload="none"
-        onPlay={() => setIsMusicPlaying(true)}
+        // onPlay={() => setIsMusicPlaying(true)}
+        onPlay={(e) => {
+          if (e.target.currentTime < 25) {
+            e.target.currentTime = 25;
+          }
+          setIsMusicPlaying(true);
+        }}
         onPause={() => setIsMusicPlaying(false)}
         onError={() => {
           console.error("Could not load /audio/wedding-music.mp3.");
@@ -236,11 +242,17 @@ export default function App() {
         />
         <Reveal as="section" className="hero section-shell" aria-labelledby="couple-names">
           <div className="hero__top">
-            <p className="script hero__occasion">Wedding Invite By</p>
-
+            <p className="script hero__occasion">Wedding Invitation {" "} {invitation.recipientType !== "guest" && "by"} {invitation.recipientType === "guest" && invitation.guestName && "for"}</p>
+            {invitation.recipientType === "guest" && invitation.guestName && (
+              <p className="script hero__occasion">
+                {/* for <br /> */}
+                {invitation.guestName} <br />
+                by
+              </p>
+            )}
             <p className="hero__date" aria-hidden="true"></p>
             <h1 className="script hero__names" id="couple-names" tabIndex="-1">
-              {invitation.recipientType === "guest" ? invitation.guestName : "Zain"}
+              Zain
             </h1>
 
             <a className="scroll-cue script" href="#welcome">
@@ -269,27 +281,76 @@ export default function App() {
           .filter((venue) => invitation.eventIds.includes(venue.id))
           .map((venue) => <VenueSection key={venue.id} venue={venue} />)}
 
-        <Reveal as="section" className="details section-shell" aria-label="Guest notes">
-          <div className="paper-card details__card">
-            <img className="details__flower details__flower--top" src="/assets/detail-flower-top.webp" alt="" />
-            <h2 className="script section-title">Dress Code</h2>
-            <p>We kindly ask guests to avoid deep red and maroon attire for the celebration.</p>
-            <span className="details__divider" aria-hidden="true">✧</span>
-            <h2 className="script section-title">Gift Preference</h2>
-            <p>Kindly, no boxed gifts please.</p>
-            <img className="details__flower details__flower--bottom" src="/assets/detail-flower-bottom.webp" alt="" />
-          </div>
-        </Reveal>
+        
+<Reveal as="section" className="details section-shell" aria-label="Guest notes">
+  <div className="paper-card details__card">
+    <img
+      className="details__flower details__flower--top"
+      src="/assets/detail-flower-top.webp"
+      alt=""
+    />
+
+    <h2 className="script section-title">Dress Code</h2>
+
+    <h3>Mehndi</h3>
+    <p>
+      Feel free to wear any color you like! Black is welcome for friends,
+      but completely optional. The groom will be dressed in white.
+    </p>
+
+    <h3>Barat</h3>
+    <p>
+      Feel free to wear any color you like! White is welcome for friends,
+      but completely optional, whether it's a traditional
+      shalwar kameez or a formal dress.
+    </p>
+
+    <h3>Walima</h3>
+    <p>
+      Kindly avoid wearing black suits or pant coats with white stripes,
+      like the one shown in the reference picture. <br/> <a href="https://i.pinimg.com/736x/02/10/e5/0210e5e69d367f3d57ea079357925edc.jpg" target="_blank" rel="noopener noreferrer" className="footer__link">Reference</a>
+    </p>
+
+    <span className="details__divider" aria-hidden="true">✧</span>
+
+    <h2 className="script section-title">Gift Preference</h2>
+    <p>
+  Your presence is what matters most! If you'd like to bring a gift,
+  feel free to bring anything of your choice. No need to worry about
+  packaging or presentation.
+</p>
+
+    <img
+      className="details__flower details__flower--bottom"
+      src="/assets/detail-flower-bottom.webp"
+      alt=""
+    />
+  </div>
+</Reveal>
+
 
         <RsvpDialog />
 
         <Reveal as="section" className="closing section-shell" aria-labelledby="closing-title">
           <p className="script section-title" id="closing-title">Hope to see you there!</p>
-          <p className="closing__names">Zain</p>
+          <p className="closing__names">Zain Ahmad</p>
           <p className="closing__footnote">With love, and gratitude</p>
         </Reveal>
 
-        <footer className="footer">Made with love <span aria-hidden="true">♡</span></footer>
+        {/* <footer className="footer">Made with love <span aria-hidden="true">♡</span></footer> */}
+        <footer className="footer">
+          Made with love <span aria-hidden="true">♡</span> by{" "}
+          <a 
+            href={`https://wa.me/923037970299?text=${encodeURIComponent(
+              "Hi Khalid! I loved the wedding invitation website. I'd like to connect with you."
+            )}`}
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="footer__link"
+          >
+            Khalid
+          </a>
+        </footer>
       </main>
     </>
   );

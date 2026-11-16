@@ -263,7 +263,13 @@ button { color: inherit; }
 .closing__footnote { margin: 12px 0 0; color: var(--muted); font-size: .82rem; font-style: italic; }
 .footer { padding: 10px 0 22px; color: #ad9678; font-size: .75rem; }
 .footer span { color: #b97868; }
-
+.footer__link{ color: #b97868;
+  text-decoration: none;
+    /* text-decoration-thickness: 1px;
+    text-underline-offset: 3px; */
+    font-family: var(--script);
+    font-weight: 400;
+}
 .rsvp-dialog {
   width: min(100% - 30px, 430px);
   max-height: min(90vh, 760px);
