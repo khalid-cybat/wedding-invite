@@ -276,7 +276,11 @@ export default function App() {
           </Reveal>
         </Reveal>
 
-        <Countdown />
+        <Countdown
+          events={venues
+            .filter((venue) => invitation.eventIds.includes(venue.id))
+            .flatMap((venue) => venue.events)}
+        />
 
         {venues
           .filter((venue) => invitation.eventIds.includes(venue.id))

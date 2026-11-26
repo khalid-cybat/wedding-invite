@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
 import Reveal from "./Reveal.jsx";
 
-const COUNTDOWN_TARGET = new Date("2026-12-03T21:00:00+05:00");
-const CELEBRATION_END = new Date("2026-12-06T16:00:00+05:00");
-
-function getRemainingTime(now) {
-  const remainingMilliseconds = Math.max(0, COUNTDOWN_TARGET.getTime() - now);
+function getRemainingTime(now, target) {
+  const remainingMilliseconds = Math.max(0, target - now);
   const totalSeconds = Math.floor(remainingMilliseconds / 1000);
 
   return {
@@ -26,17 +23,26 @@ function isSamePakistanDate(left, right) {
   return formatter.format(left) === formatter.format(right);
 }
 
-export default function Countdown() {
+export default function Countdown({ events }) {
   const [now, setNow] = useState(() => Date.now());
-  const remaining = getRemainingTime(now);
-  const celebrationStarted = now >= COUNTDOWN_TARGET.getTime();
-  const celebrationEnded = now >= CELEBRATION_END.getTime();
-  const isEventDay = isSamePakistanDate(new Date(now), COUNTDOWN_TARGET);
-
   useEffect(() => {
     const interval = window.setInterval(() => setNow(Date.now()), 1000);
     return () => window.clearInterval(interval);
   }, []);
+
+  const eventTimes = events
+    .map((event) => new Date(event.dateTime).getTime())
+    .filter(Number.isFinite)
+    .sort((left, right) => left - right);
+
+  if (eventTimes.length === 0) return null;
+
+  const countdownTarget = eventTimes[0];
+  const celebrationEnd = eventTimes[eventTimes.length - 1];
+  const remaining = getRemainingTime(now, countdownTarget);
+  const celebrationStarted = now >= countdownTarget;
+  const celebrationEnded = now >= celebrationEnd;
+  const isEventDay = isSamePakistanDate(new Date(now), new Date(countdownTarget));
 
   const title = celebrationEnded
     ? "Thank You for Celebrating With Us"
@@ -54,7 +60,7 @@ export default function Countdown() {
   return (
     <Reveal as="section" className="countdown section-shell" aria-labelledby="countdown-title">
       <h2 className="script section-title" id="countdown-title">{title}</h2>
-      <div className="countdown__grid" aria-label="Countdown to the first celebration" aria-live="off">
+      <div className="countdown__grid" aria-label="Countdown to your first celebration" aria-live="off">
         {Object.entries(remaining).map(([unit, value], index) => (
           <FragmentUnit key={unit} unit={unit} value={value} showSeparator={index > 0} />
         ))}
