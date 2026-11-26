@@ -293,24 +293,37 @@ export default function App() {
 
     <h2 className="script section-title">Dress Code</h2>
 
-    <h3>Mehndi</h3>
-    <p>
-      Feel free to wear any color you like! Black is welcome for friends,
-      but completely optional. The groom will be dressed in Black.
-    </p>
+    {invitation.eventIds.includes("manhandi") && (
+      <>
+        <h3>Mehndi</h3>
+        <p>
+          Feel free to wear any color you like! Black is welcome for friends,
+          but completely optional. The groom will be dressed in Black.
+        </p>
+      </>
+    )}
 
-    <h3>Barat</h3>
-    <p>
-      Feel free to wear any color you like! White is welcome for friends,
-      but completely optional, whether it's a traditional
-      shalwar kameez or a formal dress.
-    </p>
+    {invitation.eventIds.includes("barat") && (
+      <>
+        <h3>Barat</h3>
+        <p>
+          Feel free to wear any color you like! White is welcome for friends,
+          but completely optional, whether it's a traditional
+          shalwar kameez or a formal dress.
+        </p>
+      </>
+    )}
 
-    <h3>Walima</h3>
-    <p>
-      Kindly avoid wearing black suits or pant coats with white stripes,
-      like the one shown in the reference picture. <br/> <a href="https://i.pinimg.com/736x/02/10/e5/0210e5e69d367f3d57ea079357925edc.jpg" target="_blank" rel="noopener noreferrer" className="footer__link">Reference</a>
-    </p>
+    {invitation.eventIds.includes("walima") && (
+      <>
+        <h3>Walima</h3>
+        <p>
+          Kindly avoid wearing black suits or pant coats with white stripes,
+          like the one shown in the reference picture. <br />
+          <a href="https://i.pinimg.com/736x/02/10/e5/0210e5e69d367f3d57ea079357925edc.jpg" target="_blank" rel="noopener noreferrer" className="footer__link">Reference</a>
+        </p>
+      </>
+    )}
 
     <span className="details__divider" aria-hidden="true">✧</span>
 
