@@ -1,11 +1,11 @@
 # Wedding invitation
 
-This Vite + React site supports guest-specific invitation links. An admin can set each invitation as an individual guest or a group, assign one or more celebrations, and share a link. Individual invitations show the recipient name; group invitations keep the name in the admin only.
+This Vite + React site supports guest-specific invitation links. An admin can set each invitation as an individual guest or a group, customize the couple names shown in that invite, assign one or more celebrations, and share a link. Individual invitations show the recipient name; group invitations keep the name in the admin only.
 
 ## Supabase setup
 
 1. Create a Supabase project.
-2. In the Supabase SQL Editor, run [`supabase/migrations/20261113000000_guest_invitations.sql`](./supabase/migrations/20261113000000_guest_invitations.sql), followed by [`supabase/migrations/20261113010000_recipient_type.sql`](./supabase/migrations/20261113010000_recipient_type.sql). The second SQL script updates existing guests as individual invitations and updates the invitation lookup function.
+2. In the Supabase SQL Editor, run [`supabase/migrations/20261113000000_guest_invitations.sql`](./supabase/migrations/20261113000000_guest_invitations.sql), followed by [`supabase/migrations/20261113010000_recipient_type.sql`](./supabase/migrations/20261113010000_recipient_type.sql), then [`supabase/migrations/20261113020000_couple_names.sql`](./supabase/migrations/20261113020000_couple_names.sql). These scripts add invitation types and per-invitation couple names.
 3. In **Authentication → Users**, create the admin account. Disable public sign-ups in the Supabase Auth settings.
 4. Copy the admin user's UUID from the Users page and allowlist it by running this SQL in the SQL Editor:
 
@@ -32,7 +32,7 @@ This Vite + React site supports guest-specific invitation links. An admin can se
 ## Managing invitations
 
 - Open `/?admin=1` on the deployed site and sign in with the allowlisted admin account.
-- Create an invitation with a guest/group name and one or more of Manhandi, Barat, and Walima.
+- Create an invitation with a guest/group name, custom couple names, and one or more of Manhandi, Barat, and Walima. The couple names field can be changed later for that invitation only.
 - Use **Copy link** to share its unique invitation URL. The URL contains an opaque random token, not the guest's name or event list.
 - Change the selected events and save to update an invitation. Clear **Link active** and save to revoke it; an inactive link cannot be used.
 - A plain site URL or invalid invitation link does not show the wedding details.

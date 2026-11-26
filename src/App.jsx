@@ -153,7 +153,8 @@ export default function App() {
         setInvitation({
           guestName: guest.guest_name,
           recipientType: guest.recipient_type,
-          eventIds: guest.event_ids
+          eventIds: guest.event_ids,
+          coupleNames: guest.couple_names?.trim() || "Zain Ahmad"
         });
         setInvitationStatus("ready");
       });
@@ -172,7 +173,7 @@ export default function App() {
     if (invitation && isInvitationOpen) {
       document.title = invitation.recipientType === "guest"
         ? `Wedding Invitation for ${invitation.guestName}`
-        : "Zain — Wedding Invitation";
+        : `${invitation.coupleNames} — Wedding Invitation`;
       document.getElementById("couple-names")?.focus({ preventScroll: true });
     }
   }, [invitation, isInvitationOpen]);
@@ -252,7 +253,7 @@ export default function App() {
             )}
             <p className="hero__date" aria-hidden="true"></p>
             <h1 className="script hero__names" id="couple-names" tabIndex="-1">
-              Zain
+              {invitation.coupleNames}
             </h1>
 
             <a className="scroll-cue script" href="#welcome">
@@ -333,7 +334,7 @@ export default function App() {
 
         <Reveal as="section" className="closing section-shell" aria-labelledby="closing-title">
           <p className="script section-title" id="closing-title">Hope to see you there!</p>
-          <p className="closing__names">Zain Ahmad</p>
+          <p className="closing__names">{invitation.coupleNames}</p>
           <p className="closing__footnote">With love, and gratitude</p>
         </Reveal>
 
