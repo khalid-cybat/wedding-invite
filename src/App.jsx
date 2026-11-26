@@ -64,8 +64,8 @@ const venues = [
     events: [
       { time: "12 PM", dateTime: "2026-12-06T12:00:00+05:00", label: <>Guest<br />Arrival</> },
       { time: "1 PM", dateTime: "2026-12-06T13:00:00+05:00", label: <>Walima<br />Ceremony</> },
-      { time: "2 PM", dateTime: "2026-12-06T14:00:00+05:00", label: <>Mocktail<br />Hour</> },
-      { time: "3 PM", dateTime: "2026-12-06T15:00:00+05:00", label: "Lunch" },
+      // { time: "2 PM", dateTime: "2026-12-06T14:00:00+05:00", label: <>Mocktail<br />Hour</> },
+      { time: "2 PM", dateTime: "2026-12-06T15:00:00+05:00", label: "Lunch" },
       { time: "4 PM", dateTime: "2026-12-06T16:00:00+05:00", label: "Thanks For Coming" }
     ],
     mapEmbed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3403.08650042729!2d73.17825492883607!3d31.466806600000005!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39226900758f4fc3%3A0x1bf6b5ba63e81d86!2sThe%20Hilton%20Garden!5e0!3m2!1sen!2s!4v1794414157331!5m2!1sen!2s",
@@ -296,7 +296,7 @@ export default function App() {
     <h3>Mehndi</h3>
     <p>
       Feel free to wear any color you like! Black is welcome for friends,
-      but completely optional. The groom will be dressed in white.
+      but completely optional. The groom will be dressed in Black.
     </p>
 
     <h3>Barat</h3>
